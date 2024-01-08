@@ -1,16 +1,28 @@
-document.head.innerHTML += "<style> [data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; display: inline-block;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin: -1px; cursor:pointer;} #contextMenu {position: absolute; display: flex; flex-direction: column; background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {padding: 0 6px; cursor: pointer; display: flex; grid-gap: 6px;} #contextMenu > *:hover {background: #fff2;} </style>"
+document.head.innerHTML += "<style> [data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; display: inline-block;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin: -1px; cursor:pointer;} #contextMenu {position: absolute; display: flex; flex-direction: column; background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {width: 210px; padding: 0 6px; cursor: pointer; display: flex; grid-gap: 6px;} #contextMenu > *:hover {background: #fff2;} </style>"
 
-var contextMenu;
+let contextMenu, chat, isChatLoaded;
 
 document.addEventListener("contextmenu", openContextMenu);
 document.addEventListener("click", removeContextMenu);
-document.addEventListener("onkeydown", removeContextMenu);
-document.addEventListener("onresize", removeContextMenu);
+document.addEventListener("keydown", removeContextMenu);
+window.addEventListener("resize", removeContextMenu);
 
-function openContextMenu() {
-  var mathElement = findMathElement(event.clientX, event.clientY);
+// Experimental
+function updateChat() {
+  isChatLoaded = setInterval(() => {
+    chat = document.getElementsByClassName("pb-9")[0]?.parentElement; 
+    if (chat) {
+      clearInterval(isChatLoaded);
+      chat.addEventListener("scroll", removeContextMenu);
+    }
+  }, 10);
+}
 
-  if (mathElement) {
+function openContextMenu(event) {
+  updateChat();
+  let katexElement = findKatexElement(event.clientX, event.clientY);
+
+  if (katexElement) {
     event.preventDefault();
     removeContextMenu()
     let contextMenuHTML = `
@@ -25,25 +37,26 @@ function openContextMenu() {
 
     // Add click event listeners to the custom context menu items
     document.getElementById("copyMathML").addEventListener("click", () => {
-      checkAndCopy(mathElement, "copyMathML");
+      checkAndCopy(katexElement, "copyMathML");
     });
 
     document.getElementById("copyLaTeX").addEventListener("click", () => {
-      checkAndCopy(mathElement, "copyLaTeX");
+      checkAndCopy(katexElement, "copyLaTeX");
     });
   }
 }
 
 function removeContextMenu() {
+  updateChat();
   if (contextMenu) contextMenu.remove();
 }
 
-function findMathElement(x, y) {
-  var mathElements = document.getElementsByClassName("katex");
+function findKatexElement(x, y) {
+  let katexElements = document.getElementsByClassName("katex");
 
-  for (var i = 0; i < mathElements.length; i++) {
-    var element = mathElements[i];
-    var rect = element.getBoundingClientRect();
+  for (let i = 0; i < katexElements.length; i++) {
+    let element = katexElements[i];
+    let rect = element.getBoundingClientRect();
 
     // Check if the mouse coordinates are within the bounding box of the katex element
     if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1) {
@@ -54,16 +67,16 @@ function findMathElement(x, y) {
   return null;
 }
 
-function checkAndCopy(mathElement, type) {
+function checkAndCopy(katexElement, type) {
   if (type === "copyMathML")
-  copyToClipboard(mathElement.outerHTML);
+  copyToClipboard(katexElement.querySelector("math").outerHTML);
   else if (type === "copyLaTeX") {
-    copyToClipboard(mathElement.querySelector("semantics > annotation").textContent);
+    copyToClipboard(katexElement.querySelector("annotation").textContent);
   }
 }
 
 function copyToClipboard(text) {
-  var dummy = document.createElement("textarea");
+  let dummy = document.createElement("textarea");
   document.body.appendChild(dummy);
   dummy.value = text;
   dummy.select();
