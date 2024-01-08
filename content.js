@@ -14,13 +14,11 @@ function checkAndCopy(mathElement, type) {
   if (type === "copyMathML")
   copyToClipboard(mathElement.outerHTML);
   else if (type === "copyLaTeX") {
-    console.log(mathElement.querySelector("semantics > annotation"))
     copyToClipboard(mathElement.querySelector("semantics > annotation").textContent);
   }
 }
 
 function findMathElement(element) {
-  console.log(element);
   if (!element || element.tagName.toLowerCase() == 'html')
   return null;
   if (element.className == 'katex')
