@@ -1,9 +1,10 @@
 {
   "manifest_version": 2,
   "name": "ChatGPT MathML / LaTeX Copy",
-  "version": "2.0",
+  "version": "2.3",
   "description": "Copy MathML and LaTeX from math elements",
   "permissions": ["activeTab", "contextMenus"],
+  "web_accessible_resources": ["*.svg"],
   "icons": {
       "48": "icon.png"
   },

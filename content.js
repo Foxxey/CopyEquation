@@ -1,4 +1,4 @@
-document.head.innerHTML += "<style> [data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; position: relative; left: -3px; top: -3px;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin-left: -1px; padding-right: 2.2px; cursor:pointer;} #contextMenu {position: absolute;  background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {padding: 0 6px; cursor: pointer;} #contextMenu > *:hover {background: #fff2;} </style>"
+document.head.innerHTML += "<style> [data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; display: inline-block;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin: -1px; cursor:pointer;} #contextMenu {position: absolute; display: flex; flex-direction: column; background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {padding: 0 6px; cursor: pointer; display: flex; grid-gap: 6px;} #contextMenu > *:hover {background: #fff2;} </style>"
 
 var contextMenu;
 
@@ -15,8 +15,8 @@ function openContextMenu() {
     removeContextMenu()
     let contextMenuHTML = `
     <div id="contextMenu" style="left: ${event.clientX}px; top: ${event.clientY}px;">
-      <div id="copyMathML">Copy for Word (MathML)</div>
-      <div id="copyLaTeX">Copy LaTeX</div>
+      <div id="copyMathML"><img src="${chrome.runtime.getURL('word.svg')}"/> Copy for Word (MathML) </div>
+      <div id="copyLaTeX"><img src="${chrome.runtime.getURL('latex.svg')}"/> Copy LaTeX </div>
     </div>`;
 
     contextMenu = document.createElement('div');
