@@ -1,4 +1,4 @@
-document.head.innerHTML += "<style> [data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; position: relative; left: -3px; top: -3px; cursor:pointer;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin-left: -1px; padding-right: 2.2px;} #contextMenu {position: absolute;  background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {padding: 0 6px; cursor: pointer;} #contextMenu > *:hover {background: #fff2;} </style>"
+document.head.innerHTML += "<style> [data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; position: relative; left: -3px; top: -3px;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin-left: -1px; padding-right: 2.2px; cursor:pointer;} #contextMenu {position: absolute;  background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {padding: 0 6px; cursor: pointer;} #contextMenu > *:hover {background: #fff2;} </style>"
 
 var contextMenu;
 document.addEventListener("contextmenu", openContextMenu);
@@ -37,16 +37,14 @@ function removeContextMenu() {
 }
 
 function findMathElement(x, y) {
-  var mathElements = document.getElementsByTagName("math");
+  var mathElements = document.getElementsByClassName("katex");
 
   for (var i = 0; i < mathElements.length; i++) {
     var element = mathElements[i];
     var rect = element.getBoundingClientRect();
-    // Hack because both katex and math element rects behave weirdly
-    var katex_rect = element.parentElement.parentElement.getBoundingClientRect();
 
-    // Check if the mouse coordinates are within the bounding box of the math element
-    if (x >= rect.left && x <= katex_rect.right && y >= rect.top && y <= rect.bottom) {
+    // Check if the mouse coordinates are within the bounding box of the katex element
+    if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1) {
       return element;
     }
   }
