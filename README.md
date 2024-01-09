@@ -28,4 +28,6 @@ Click on the "Load unpacked" button and select the directory where you cloned th
 
 After installing the extension, visit the ChatGPT web interface. When you see a mathematical expression, right-click on it. You should see an option to copy either the LaTeX or MathML data. Now you can copy it into Word or your favourite TeX distribution. Have fun!
 
+![HowTo](https://github.com/Foxxey/ChatGPT-LaTeX-MathML-Copy/assets/66215329/c8d12d4a-d050-41e8-aa6a-8288148861be)
+
 If you encounter any issues or have suggestions, feel free to contribute by submitting a [pull request](https://github.com/Foxxey/Karteikarte.com-Import-Script/pulls). If you do please update the manifest.json by adding 1 to the minor version.
