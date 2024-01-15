@@ -1,4 +1,6 @@
-document.head.innerHTML += "<style>[data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; display: inline-block;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin: -1px; cursor:pointer;} #contextMenu {position: absolute; display: flex; flex-direction: column; background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {width: 210px; padding: 0 6px; cursor: pointer; display: flex; grid-gap: 6px;} #contextMenu > *:hover {background: #fff2;}</style>"
+let style = document.createElement('style');
+style.innerHTML = "[data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; display: inline-block;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin: -1px; cursor:pointer;} #contextMenu {position: absolute; display: flex; flex-direction: column; background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {width: 210px; padding: 0 6px; cursor: pointer; display: flex; grid-gap: 6px;} #contextMenu > *:hover {background: #fff2;} #contextMenu img {height: 16px; margin-top: auto; margin-bottom: auto;}"
+document.body.appendChild(style);
 
 let contextMenu, chat, isChatLoaded;
 
@@ -27,8 +29,8 @@ function openContextMenu(event) {
     removeContextMenu()
     let contextMenuHTML = `
     <div id="contextMenu" style="left: ${event.clientX}px; top: ${event.clientY}px;">
-      <div id="copyMathML"><img src="${chrome.runtime.getURL('word.svg')}"/> Copy for Word (MathML) </div>
-      <div id="copyLaTeX"><img src="${chrome.runtime.getURL('latex.svg')}"/> Copy LaTeX </div>
+      <div id="copyMathML"><img src="${chrome.runtime.getURL('svg/word.svg')}"/> Copy for Word (MathML) </div>
+      <div id="copyLaTeX"><img src="${chrome.runtime.getURL('svg/latex.svg')}"/> Copy LaTeX </div>
     </div>`;
 
     contextMenu = document.createElement('div');
@@ -54,14 +56,12 @@ function removeContextMenu() {
 function findKatexElement(x, y) {
   let katexElements = document.getElementsByClassName("katex");
 
-  for (let i = 0; i < katexElements.length; i++) {
-    let element = katexElements[i];
+  for (const element of katexElements) {
     let rect = element.getBoundingClientRect();
 
     // Check if the mouse coordinates are within the bounding box of the katex element
-    if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1) {
+    if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1)
       return element;
-    }
   }
 
   return null;
@@ -69,10 +69,9 @@ function findKatexElement(x, y) {
 
 function checkAndCopy(katexElement, type) {
   if (type === "copyMathML")
-  copyToClipboard(katexElement.querySelector("math").outerHTML);
-  else if (type === "copyLaTeX") {
+    copyToClipboard(katexElement.querySelector("math").outerHTML);
+  else if (type === "copyLaTeX")
     copyToClipboard(katexElement.querySelector("annotation").textContent);
-  }
 }
 
 function copyToClipboard(text) {

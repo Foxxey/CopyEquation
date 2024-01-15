@@ -1,0 +1,35 @@
+Inkscape license
+================
+
+Most Inkscape source code is available under the GNU General Public License, version 2 or later.
+
+Notable exceptions are:
+- all javascript polyfill libraries are CC0 / Public Domain
+- some libraries in src/3rdparty (mostly GNU Lesser General Public License or Mozilla Public License).
+- a few files copied from GIMP, which are available under GNU (L)GPL version 3 or later.
+- a few files which are dual-licensed, which means that they offer the additional permission to alternatively use them under another license.
+
+As such, the complete binaries of Inkscape are currently covered by the terms of GNU GPL version 3 or later.
+
+License of individual source files 
+==================================
+
+The license of each individual inkscape source file can be found in the first few lines after "SPDX-License-Identifier:". The license text of every such license can be found in LICENSES/. Some files are dual-licensed, e.g. "GPL-2.0-or-later OR MPL-1.1", which means you can choose one of these licenses.
+
+Libraries have their COPYING or LICENSE file in the respective subdirectory.
+
+See also https://spdx.org/licenses/ for the full license texts, and https://spdx.org/ids for the standardized header format.
+
+
+License Compatibility
+=====================
+
+Suggested reading for license version compatibility: https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
+
+Roughly summarized (I am not a lawyer, this is not legal advice):
+- You may legally make the following license changes without having to ask anyone:
+  LGPL-2.1-or-later -> GPL-2.0-or-later -> GPL-3.0-or-later
+  LGPL-3.0-or-later -> GPL-3.0-or-later
+- Due to that, the resulting inkscape must be under GPL-3.0-or-later.
+- Any license that is not "-or-later" is evil and must not be used in the inkscape project.
+
