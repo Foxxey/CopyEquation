@@ -49,7 +49,7 @@ fetchSVGContent('word', function(wordSvgContent) {
     
     function openContextMenu(event) {
       removeContextMenu();
-      if (isChatGPT) updateChat();
+      if (isChatGPT && !isAndroid) updateChat();
       let Element = (isChatGPT) ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
       if (Element) {
         event.preventDefault();
@@ -78,7 +78,7 @@ fetchSVGContent('word', function(wordSvgContent) {
 })
 
 function removeContextMenu() {
-  if (isChatGPT) updateChat();
+  if (isChatGPT && !isAndroid) updateChat();
   [...document.querySelectorAll('div:has(#contextMenu)')].forEach((e)=>e.remove());
 }
 

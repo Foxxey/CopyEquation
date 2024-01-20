@@ -4,7 +4,7 @@ This extension allows you to copy equations from ChatGPT and Wikipedia into Word
 
 ## Installation
 
-If you're using Firefox visit https://addons.mozilla.org/en-US/firefox/addon/copyequation/. It also works for the Android version of Firefox which is the only mobile version this extension supports. For desktop Chromium-based browsers follow these steps to download and install the extension:
+If you're using Firefox visit https://addons.mozilla.org/addon/copyequation/. It also works for the Android version of Firefox which is the only mobile version this extension supports. For desktop Chromium-based browsers follow these steps to download and install the extension:
 
 ### Step 1: Clone the Repository
 
