@@ -1,3 +1,7 @@
+## Information
+
+This extension allows you to copy equations from ChatGPT and Wikipedia into Word (aka. the MathML format) and as LaTeX. It supports both the white and dark mode of the ChatGPT GUI and the [Darkreader extension](https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh) for the Wikipedia website (and the ChatGPT one if you're really into that).
+
 ## Installation
 
 If you're using Firefox visit https://addons.mozilla.org/en-US/firefox/addon/chatgpt-mathml-latex-copy/.

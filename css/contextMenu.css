@@ -1,0 +1,36 @@
+@font-face {
+    font-family: Söhne;
+    src: url(https://cdn.oaistatic.com/_next/static/media/soehne-buch.13189857.woff2) format(woff2)
+}
+
+#contextMenu {
+    line-height: 1.5;
+    font-family: Söhne;
+    color: #fff;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: #22232a;
+    border: 1px solid #434343;
+    padding: 5px;
+    box-shadow: 1px 1px 3px #0002;
+    user-select: none;
+}
+
+#contextMenu>* {
+    width: 210px;
+    padding: 0 6px;
+    cursor: pointer;
+    display: flex;
+    grid-gap: 6px;
+}
+
+#contextMenu>*:hover {
+    backdrop-filter: invert(0.13);
+}
+
+#contextMenu svg {
+    height: 16px;
+    margin-top: auto;
+    margin-bottom: auto;
+}

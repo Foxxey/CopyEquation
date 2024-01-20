@@ -1,13 +1,21 @@
-let style = document.createElement('style');
-style.innerHTML = "[data-message-id] {overflow-x: visible;} .math.math-inline {overflow-x: visible;} .katex {overflow-x: visible; padding: 3px; display: inline-block;} body:not(:has(#contextMenu)) .katex:hover {border: 1px solid #fff; filter: contrast(1.5); background: #0003; margin: -1px; cursor:pointer;} #contextMenu {position: absolute; display: flex; flex-direction: column; background-color: #22232a; border: 1px solid #434343; padding: 5px; box-shadow: 1px 1px 3px #0002;} #contextMenu > * {width: 210px; padding: 0 6px; cursor: pointer; display: flex; grid-gap: 6px;} #contextMenu > *:hover {background: #fff2;} #contextMenu img {height: 16px; margin-top: auto; margin-bottom: auto;}"
-document.body.appendChild(style);
+let isChatGPT = location.host.includes('chat');
 
-let contextMenu, chat, isChatLoaded;
+insertCSS('contextMenu');
+insertCSS(isChatGPT ? 'chatgpt' : 'wikipedia');
 
-document.addEventListener("contextmenu", openContextMenu);
-document.addEventListener("click", removeContextMenu);
-document.addEventListener("keydown", removeContextMenu);
-window.addEventListener("resize", removeContextMenu);
+function insertCSS(name) {
+  link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = chrome.runtime.getURL(`css/${name}.css`);
+  document.head.appendChild(link);
+}
+
+function fetchSVGContent(name, callback) {
+  fetch(chrome.runtime.getURL(`svg/${name}.svg`))
+    .then(response => response.text())
+    .then(svgContent => callback(svgContent))
+    .catch(error => console.error(`Error fetching SVG content: ${error}`));
+}
 
 // Experimental
 function updateChat() {
@@ -20,58 +28,81 @@ function updateChat() {
   }, 10);
 }
 
-function openContextMenu(event) {
-  updateChat();
-  let katexElement = findKatexElement(event.clientX, event.clientY);
+document.addEventListener("click", removeContextMenu);
+document.addEventListener("keydown", removeContextMenu);
+window.addEventListener("resize", removeContextMenu);
+if (!isChatGPT) document.addEventListener("scroll", removeContextMenu);
 
-  if (katexElement) {
-    event.preventDefault();
-    removeContextMenu()
-    let contextMenuHTML = `
-    <div id="contextMenu" style="left: ${event.clientX}px; top: ${event.clientY}px;">
-      <div id="copyMathML"><img src="${chrome.runtime.getURL('svg/word.svg')}"/> Copy for Word (MathML) </div>
-      <div id="copyLaTeX"><img src="${chrome.runtime.getURL('svg/latex.svg')}"/> Copy LaTeX </div>
-    </div>`;
+let contextMenu, chat, isChatLoaded;
 
-    contextMenu = document.createElement('div');
-    contextMenu.innerHTML = contextMenuHTML;
-    document.body.appendChild(contextMenu);
+fetchSVGContent('word', function(wordSvgContent) {
+  fetchSVGContent('latex', function(latexSvgContent) {
+    document.addEventListener("contextmenu", openContextMenu);
+    
+    function openContextMenu(event) {
+      removeContextMenu();
+      if (isChatGPT) updateChat();
+      let Element = (isChatGPT) ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
+      if (Element) {
+        event.preventDefault();
 
-    // Add click event listeners to the custom context menu items
-    document.getElementById("copyMathML").addEventListener("click", () => {
-      checkAndCopy(katexElement, "copyMathML");
-    });
+          // Use the fetched SVG content in your contextMenuHTML
+          let contextMenuHTML = `
+          <div id="contextMenu" style="left: ${event.clientX}px; top: ${event.clientY + window.pageYOffset}px;">
+            <div id="copyMathML">${wordSvgContent} Copy for Word (MathML) </div>
+            <div id="copyLaTeX">${latexSvgContent} Copy LaTeX </div>
+          </div>`;
 
-    document.getElementById("copyLaTeX").addEventListener("click", () => {
-      checkAndCopy(katexElement, "copyLaTeX");
-    });
-  }
-}
+          contextMenu = document.createElement('div');
+          contextMenu.innerHTML = contextMenuHTML;
+          removeContextMenu();
+          document.body.appendChild(contextMenu);
+
+          // Add click event listeners to the custom context menu items
+          document.getElementById("copyMathML").addEventListener("click", () => {
+            checkAndCopy(Element, "copyMathML");
+          });
+
+          document.getElementById("copyLaTeX").addEventListener("click", () => {
+            checkAndCopy(Element, "copyLaTeX");
+          });
+      }
+    }
+  })
+})
 
 function removeContextMenu() {
-  updateChat();
-  if (contextMenu) contextMenu.remove();
+  if (isChatGPT) updateChat();
+  [...document.querySelectorAll('div:has(#contextMenu)')].forEach((e)=>e.remove());
 }
 
-function findKatexElement(x, y) {
-  let katexElements = document.getElementsByClassName("katex");
-
-  for (const element of katexElements) {
+function isWithin(x, y, className, func) {
+  let Elements = document.getElementsByClassName(className);
+  for (const element of Elements) {
     let rect = element.getBoundingClientRect();
 
-    // Check if the mouse coordinates are within the bounding box of the katex element
     if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1)
-      return element;
+      return func(element);
   }
-
   return null;
 }
 
-function checkAndCopy(katexElement, type) {
+function findMweElement(x, y) {
+  return(isWithin(x, y, "mwe-math-fallback-image-inline", (e)=>e.parentElement))
+}
+
+function findKatexElement(x, y) {
+  return(isWithin(x, y, "katex", (e)=>e))
+}
+
+function checkAndCopy(Element, type) {
   if (type === "copyMathML")
-    copyToClipboard(katexElement.querySelector("math").outerHTML);
-  else if (type === "copyLaTeX")
-    copyToClipboard(katexElement.querySelector("annotation").textContent);
+    copyToClipboard(Element.querySelector("math").outerHTML);
+  else if (type === "copyLaTeX") {
+    let latex = Element.querySelector("annotation").textContent
+    let matches = latex.match(/displaystyle (.*)}/s);
+    copyToClipboard(matches ? matches[1] : latex)
+  };
 }
 
 function copyToClipboard(text) {

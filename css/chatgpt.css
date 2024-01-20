@@ -1,0 +1,39 @@
+[data-message-id] {
+    overflow-x: visible;
+}
+
+.math.math-inline {
+    overflow-x: visible;
+}
+
+.katex {
+    overflow-x: visible;
+    padding: 3px;
+    display: inline-block;
+}
+
+body:not(:has(#contextMenu)) .katex:hover {
+    border: 1px solid #fff;
+    filter: contrast(1.5);
+    background: #0003;
+    margin: -1px;
+    cursor: pointer;
+}
+
+html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu)) .katex:hover {
+    filter: brightness(100);
+}
+
+#contextMenu svg {
+    fill: #fff;
+}
+
+html[class="light"] #contextMenu {
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #000;
+}
+
+html[class="light"] #contextMenu svg {
+    fill: #000;
+}

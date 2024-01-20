@@ -1,0 +1,21 @@
+.mwe-math-element>img {
+    border: 1px solid transparent;
+    padding: 3px;
+}
+
+.mwe-math-element>img:hover {
+    border: 1px solid #fff;
+    filter: contrast(1.5);
+    background: #0003;
+    cursor: pointer;
+}
+
+#contextMenu {
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #000;
+}
+
+html[data-darkreader-scheme="dark"] #contextMenu svg {
+    fill: #fff;
+}

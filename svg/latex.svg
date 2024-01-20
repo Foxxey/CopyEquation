@@ -1,3 +1,11 @@
 <!-- Optimized the inkscape-1.3.2_2023-11-25_091e20ef0f/share/icons/multicolor/symbolic/actions/tool-pages-symbolic.svg using svgviewer.dev, removed unused styles, elements and attributes, made this icon white on Jan 8, 2024 -->
+<!-- Beautified, removed unused attributes, styles and path points on Jan 20, 2024 -->
 <!-- This resource is licensed under GPL-2.0-or-later, the license text can be found in LICENSES/GPL-2.0-or-later.txt. More info in COPYING. -->
-<svg viewBox="0 0 16 16" height="16" width="16" xmlns="http://www.w3.org/2000/svg"><path class="base" d="M11 6a1 1 0 0 0-.293-.707l-2-2A1 1 0 0 0 8 3H1a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1zM1 14l1 1V4L1 5h7l-.707-.293 2 2L9 6v9l1-1z" style="fill:#fff;fill-opacity:1"/><path style="fill:#fff;fill-opacity:1" d="M7 3.525V6.5a.5.5 0 0 0 .5.5H11V6H7.5l.5.5V3.525Z"/><path class="base" d="M13 13h2a1 1 0 0 0 1-1V3a1 1 0 0 0-.293-.707l-2-2A1 1 0 0 0 13 0H6a1 1 0 1 0 0 2h7l-.707-.293 2 2L14 3v9l1-1h-2a1 1 0 1 0 0 2z" style="fill:#fff;fill-opacity:1"/><path style="fill:#fafafa;fill-opacity:1" d="M7.5 3.525V6.5H11" class="base"/><path style="fill:#fff;fill-rule:nonzero;stroke:none;stroke-width:3.77953;stroke-linejoin:bevel;stop-color:#000;fill-opacity:1" d="M12 1v2.5a.5.5 0 0 0 .5.5H15V3h-2.5l.5.5V1Z"/><path style="fill:#fff;fill-opacity:1" d="m12.5 1.5 2 2h-2z"/></svg>
+<svg viewBox="0 0 16 16" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11 6a1 1 0 00-.293-.707l-2-2A1 1 0 008 3H1a1 1 0 00-1 1v11a1 1 0 001 1h9a1 1 0 001-1zM2 14 2 5h5.586L9 6.414v7.586z"/>
+    <path d="M7 3.525V6.5a.5.5 0 00.5.5H11V6L8 6V3.525Z"/>
+    <path d="M13 13h2a1 1 0 001-1V3a1 1 0 00-.293-.707l-2-2A1 1 0 0013 0H6a1 1 0 100 2h6.586L14 3.414v7.586h-1a1 1 0 100 2z"/>
+    <path d="M7.5 3.525V6.5H11"/>
+    <path d="M12 1v2.5a.5.5 0 00.5.5H15V3L13 3V1Z"/>
+    <path d="m12.5 1.5 2 2h-2z"/>
+</svg>
