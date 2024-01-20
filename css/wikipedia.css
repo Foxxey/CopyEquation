@@ -1,16 +1,17 @@
 .mwe-math-element>img {
-    border: 1px solid transparent;
+    border: 1px solid #0000;
     padding: 3px;
+    margin: -4px;
 }
 
-.mwe-math-element>img:hover {
+body:not(:has(#contextMenu[desktop])) .mwe-math-element>img:hover {
     border: 1px solid #fff;
     filter: contrast(1.5);
     background: #0003;
     cursor: pointer;
 }
 
-#contextMenu {
+html:not(html[data-darkreader-scheme="dark"]) #contextMenu {
     color: #000;
     background-color: #fff;
     border: 1px solid #000;

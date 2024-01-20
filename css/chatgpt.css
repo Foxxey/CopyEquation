@@ -9,18 +9,19 @@
 .katex {
     overflow-x: visible;
     padding: 3px;
+    border: 1px solid #0000;
+    margin: -4px;
     display: inline-block;
 }
 
-body:not(:has(#contextMenu)) .katex:hover {
+body:not(:has(#contextMenu[desktop])) .katex:hover {
     border: 1px solid #fff;
     filter: contrast(1.5);
     background: #0003;
-    margin: -1px;
     cursor: pointer;
 }
 
-html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu)) .katex:hover {
+html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu[desktop])) .katex:hover {
     filter: brightness(100);
 }
 
@@ -28,12 +29,16 @@ html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu)) .katex:hover {
     fill: #fff;
 }
 
-html[class="light"] #contextMenu {
+html[class="light"]:not(html[data-darkreader-scheme="dark"]) #contextMenu {
     color: #000;
     background-color: #fff;
     border: 1px solid #000;
 }
 
-html[class="light"] #contextMenu svg {
+html[class="light"]:not(html[data-darkreader-scheme="dark"]) #contextMenu svg {
     fill: #000;
+}
+
+html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu[desktop])) .katex:hover {
+    filter: brightness(100);
 }

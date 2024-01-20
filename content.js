@@ -1,7 +1,9 @@
 let isChatGPT = location.host.includes('chat');
+let isAndroid = navigator.userAgent.includes("Android");
 
 insertCSS('contextMenu');
 insertCSS(isChatGPT ? 'chatgpt' : 'wikipedia');
+if (isAndroid) insertCSS('android');
 
 function insertCSS(name) {
   link = document.createElement('link');
@@ -30,14 +32,20 @@ function updateChat() {
 
 document.addEventListener("click", removeContextMenu);
 document.addEventListener("keydown", removeContextMenu);
-window.addEventListener("resize", removeContextMenu);
-if (!isChatGPT) document.addEventListener("scroll", removeContextMenu);
+if (!isAndroid) window.addEventListener("resize", removeContextMenu);
+if (!isChatGPT && !isAndroid) document.addEventListener("scroll", removeContextMenu);
 
-let contextMenu, chat, isChatLoaded;
+let contextMenu, chat, isChatLoaded, putX, putY;
 
 fetchSVGContent('word', function(wordSvgContent) {
   fetchSVGContent('latex', function(latexSvgContent) {
+    if (!isAndroid) {
+      wordSvgContent += "Copy for Word (MathML)";
+      latexSvgContent += "Copy LaTeX";
+    }
+
     document.addEventListener("contextmenu", openContextMenu);
+    if (isAndroid) document.addEventListener("click", openContextMenu);
     
     function openContextMenu(event) {
       removeContextMenu();
@@ -45,10 +53,11 @@ fetchSVGContent('word', function(wordSvgContent) {
       let Element = (isChatGPT) ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
       if (Element) {
         event.preventDefault();
+
         let contextMenuHTML = `
-        <div id="contextMenu" style="left: ${event.clientX}px; top: ${event.clientY + window.pageYOffset}px;">
-          <div id="copyMathML">${wordSvgContent} Copy for Word (MathML) </div>
-          <div id="copyLaTeX">${latexSvgContent} Copy LaTeX </div>
+        <div id="contextMenu" ${isAndroid ? '' : 'desktop'} style="left: ${putX}px; top: ${putY + window.pageYOffset}px;">
+          <div id="copyMathML">${wordSvgContent}</div>
+          <div id="copyLaTeX">${latexSvgContent}</div>
         </div>`;
 
         contextMenu = document.createElement('div');
@@ -78,8 +87,11 @@ function isWithin(x, y, className, func) {
   for (const element of Elements) {
     let rect = element.getBoundingClientRect();
 
-    if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1)
+    if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1) {
+      putX = isAndroid ? rect.right + 7 : x;
+      putY = isAndroid ? rect.top + (rect.bottom - rect.top) / 2 - 23 : y;
       return func(element);
+    }
   }
   return null;
 }

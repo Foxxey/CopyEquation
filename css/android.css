@@ -1,0 +1,40 @@
+.katex {
+    border: 2px solid #0000!important;
+    margin: -5px;
+}
+
+.katex:hover {
+    border: 2px solid #fff!important;
+}
+
+.mwe-math-element>img {
+    border: 2px solid #0000;
+    margin: -5px;
+}
+
+.mwe-math-element>img:hover {
+    border: 2px solid #fff!important;
+}
+
+html[data-darkreader-scheme="dark"] .mwe-math-element>img:hover {
+    border: 2px solid #000!important;
+}
+
+#contextMenu {
+    border-width: 2px!important;
+    flex-direction: row;
+    border-radius: 15px;
+}
+
+#contextMenu>* {
+    grid-gap: 0;
+    width: unset;
+    height: 32px;
+    width: 32px;
+    padding: 0;
+}
+
+#contextMenu svg {
+    height: 20px;
+    width: 32px;
+}
