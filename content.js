@@ -49,13 +49,13 @@ fetchSVGContent('word', function(wordSvgContent) {
     
     function openContextMenu(event) {
       removeContextMenu();
-      if (isChatGPT && !isAndroid) updateChat();
+      if (isChatGPT) updateChat();
       let Element = (isChatGPT) ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
       if (Element) {
         event.preventDefault();
 
         let contextMenuHTML = `
-        <div id="contextMenu" ${isAndroid ? '' : 'desktop'} style="left: ${putX}px; top: ${putY + window.pageYOffset}px;">
+        <div id="contextMenu" ${isAndroid ? '' : 'desktop'} style="left: ${putX}px; top: ${putY + window.scrollY}px;">
           <div id="copyMathML">${wordSvgContent}</div>
           <div id="copyLaTeX">${latexSvgContent}</div>
         </div>`;
@@ -78,8 +78,8 @@ fetchSVGContent('word', function(wordSvgContent) {
 })
 
 function removeContextMenu() {
-  if (isChatGPT && !isAndroid) updateChat();
-  [...document.querySelectorAll('div:has(#contextMenu)')].forEach((e)=>e.remove());
+  if (isChatGPT) updateChat();
+  contextMenu?.remove();
 }
 
 function isWithin(x, y, className, func) {
