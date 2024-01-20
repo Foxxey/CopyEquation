@@ -45,27 +45,24 @@ fetchSVGContent('word', function(wordSvgContent) {
       let Element = (isChatGPT) ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
       if (Element) {
         event.preventDefault();
+        let contextMenuHTML = `
+        <div id="contextMenu" style="left: ${event.clientX}px; top: ${event.clientY + window.pageYOffset}px;">
+          <div id="copyMathML">${wordSvgContent} Copy for Word (MathML) </div>
+          <div id="copyLaTeX">${latexSvgContent} Copy LaTeX </div>
+        </div>`;
 
-          // Use the fetched SVG content in your contextMenuHTML
-          let contextMenuHTML = `
-          <div id="contextMenu" style="left: ${event.clientX}px; top: ${event.clientY + window.pageYOffset}px;">
-            <div id="copyMathML">${wordSvgContent} Copy for Word (MathML) </div>
-            <div id="copyLaTeX">${latexSvgContent} Copy LaTeX </div>
-          </div>`;
+        contextMenu = document.createElement('div');
+        contextMenu.innerHTML = contextMenuHTML;
+        removeContextMenu();
+        document.body.appendChild(contextMenu);
 
-          contextMenu = document.createElement('div');
-          contextMenu.innerHTML = contextMenuHTML;
-          removeContextMenu();
-          document.body.appendChild(contextMenu);
+        document.getElementById("copyMathML").addEventListener("click", () => {
+          checkAndCopy(Element, "copyMathML");
+        });
 
-          // Add click event listeners to the custom context menu items
-          document.getElementById("copyMathML").addEventListener("click", () => {
-            checkAndCopy(Element, "copyMathML");
-          });
-
-          document.getElementById("copyLaTeX").addEventListener("click", () => {
-            checkAndCopy(Element, "copyLaTeX");
-          });
+        document.getElementById("copyLaTeX").addEventListener("click", () => {
+          checkAndCopy(Element, "copyLaTeX");
+        });
       }
     }
   })
