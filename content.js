@@ -82,8 +82,9 @@ function removeContextMenu() {
   contextMenu?.remove();
 }
 
-function isWithin(x, y, className, func) {
-  let Elements = document.getElementsByClassName(className);
+function isWithin(x, y, classNames, func) {
+  let Elements = [];
+  classNames.forEach((e)=>{Elements = Elements.concat([...document.getElementsByClassName(e)])});
   for (const element of Elements) {
     let rect = element.getBoundingClientRect();
 
@@ -97,11 +98,11 @@ function isWithin(x, y, className, func) {
 }
 
 function findMweElement(x, y) {
-  return(isWithin(x, y, "mwe-math-fallback-image-inline", (e)=>e.parentElement))
+  return(isWithin(x, y, ["mwe-math-fallback-image-inline", "mwe-math-fallback-image-display"], (e)=>e.parentElement))
 }
 
 function findKatexElement(x, y) {
-  return(isWithin(x, y, "katex", (e)=>e))
+  return(isWithin(x, y, ["katex"], (e)=>e))
 }
 
 function checkAndCopy(Element, type) {

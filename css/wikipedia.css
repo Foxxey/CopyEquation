@@ -1,7 +1,15 @@
+.mwe-math-element {
+    overflow: hidden;
+}
+
 .mwe-math-element>img {
     border: 1px solid #0000;
     padding: 3px;
     margin: -4px;
+}
+
+.mwe-math-fallback-image-display {
+    margin: 0px!important;
 }
 
 body:not(:has(#contextMenu[desktop])) .mwe-math-element>img:hover {
