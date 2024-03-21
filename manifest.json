@@ -3,9 +3,13 @@
   "name": "Copy Equation from ChatGPT and Wikipedia",
   "version": "3.0",
   "description": "Copy MathML and LaTeX from math elements",
+  "permissions": [
+    "storage"
+  ],
   "web_accessible_resources": [
     "svg/*.svg",
-    "css/*.css"
+    "css/*.css",
+    "popup.html"
   ],
   "icons": {
     "16": "icon/16.png",

@@ -14,11 +14,15 @@ function insertCSS(name) {
   document.head.appendChild(link);
 }
 
-function fetchSVGContent(name, callback) {
-  fetch(chrome.runtime.getURL(`svg/${name}.svg`))
+function fetchContent(path, callback) {
+  fetch(chrome.runtime.getURL(path))
     .then(response => response.text())
     .then(svgContent => callback(svgContent))
     .catch(error => console.error(`Error fetching SVG content: ${error}`));
+}
+
+function fetchSVGContent(name, callback) {
+  fetchContent(`svg/${name}.svg`, callback);
 }
 
 document.addEventListener("click", removeContextMenu);
@@ -29,8 +33,8 @@ if (!isChatGPT && !isAndroid) document.addEventListener("scroll", removeContextM
 let contextMenu, chat, isChatLoaded, putX, putY;
 window.updateChat = () => {};
 
-fetchSVGContent('word', function(wordSvgContent) {
-  fetchSVGContent('latex', function(latexSvgContent) {
+fetchSVGContent('word', (wordSvgContent) => {
+  fetchSVGContent('latex', (latexSvgContent) => {
     document.addEventListener("contextmenu", openContextMenu);
     if (isAndroid) document.addEventListener("click", openContextMenu);
     
@@ -121,57 +125,70 @@ function addBreaks(string, array) {
   return string;
 }
 
-function copyAll(element, type) {
-  let doc = parser.parseFromString(element.querySelector(".markdown").innerHTML, 'text/html');
-  
-  [...doc.querySelectorAll(".math")].forEach((e) => {
-    let string = check(e, type)
-      .replaceAll("&lt;", "&amp;lt;")
-      .replaceAll("&gt;", "&amp;gt;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;");
-    let bool = e.classList.contains("math-display");
-    if (type == "copyLaTeX")
-      e.outerHTML = (bool ? `\\begin{equation*}\n${string}\n\\end{equation*}\n\n` : `$${string}$`).replaceAll("align*", "aligned");
-    else 
-      e.outerHTML = bool ? `${string}\n` : string;
-  });
+fetchContent("popup.html", (popupHTML) => {
+  window.copyAll = (element, type) => {
+    if (type == "copyMathML") {
+      chrome.storage.sync.get(null, (e) => {
+        if (!e["usedbefore"]) {
+            document.body.innerHTML += popupHTML;
+            document.getElementById("okaybutton").addEventListener("click", () => {
+              document.querySelector(".absolute.inset-0").remove();
+            })
+          chrome.storage.sync.set({ usedbefore: true });
+        }
+      });
+    }
 
-  [...doc.querySelectorAll(".rounded-md")].forEach((e) => {
-    let header = e.querySelector(".rounded-t-md");
-    let lang = header.querySelector("span").textContent;
-    if (type == "copyLaTeX") {
-      header.outerHTML = `\\begin{minted}{${lang}}\n\n`;
-      e.outerHTML += "\n\\end{minted}\n\n";
-    } header.remove();
-  });
+    let doc = parser.parseFromString(element.querySelector(".markdown").innerHTML, 'text/html');
+    
+    [...doc.querySelectorAll(".math")].forEach((e) => {
+      let string = check(e, type)
+        .replaceAll("&lt;", "&amp;lt;")
+        .replaceAll("&gt;", "&amp;gt;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+      let bool = e.classList.contains("math-display");
+      if (type == "copyLaTeX")
+        e.outerHTML = (bool ? `\\begin{equation*}\n${string}\n\\end{equation*}\n\n` : `$${string}$`).replaceAll("align*", "aligned");
+      else 
+        e.outerHTML = bool ? `${string}\n` : string;
+    });
 
-  doc.body.outerHTML = addBreaks(doc.body.outerHTML, [
-    ["</p>", 2],
-    ["</li>", 1],
-    ["<ul>", 1],
-    ["</ul>", 1],
-    ["<ol>", 1],
-    ["</ol>", 1],
-    ["<li>", 0, "- "]
-  ]).replaceAll(/<\/h([1-6])>/g, "</h$1>\n\n");
+    [...doc.querySelectorAll(".rounded-md")].forEach((e) => {
+      let header = e.querySelector(".rounded-t-md");
+      let lang = header.querySelector("span").textContent;
+      if (type == "copyLaTeX") {
+        header.outerHTML = `\\begin{minted}{${lang}}\n\n`;
+        e.outerHTML += "\n\\end{minted}\n\n";
+      } header.remove();
+    });
 
-  let string = doc.body.textContent;
+    doc.body.outerHTML = addBreaks(doc.body.outerHTML, [
+      ["</p>", 2],
+      ["</li>", 1],
+      ["<ul>", 1],
+      ["</ul>", 1],
+      ["<ol>", 1],
+      ["</ol>", 1],
+      ["<li>", 0, "- "]
+    ]).replaceAll(/<\/h([1-6])>/g, "</h$1>\n\n");
 
-  if (type == "copyMathML")
-    string = string
-      .replaceAll(/<\/math>\n+/g, "</math>\n")
-      .replaceAll(/\n{3,}/g, "\n\n")
-      .replaceAll(/<\/math>\n*<math/g, "</math>\n\n<math")
-  else
-    string = string.replaceAll("$\\displaystyle$", "\\\\displaystyle");
+    let string = doc.body.textContent;
 
-  copyToClipboard(string);
-}
+    if (type == "copyMathML")
+      string = string
+        .replaceAll(/<\/math>\n+/g, "</math>\n")
+        .replaceAll(/\n{3,}/g, "\n\n")
+        .replaceAll(/<\/math>\n*<math/g, "</math>\n\n<math")
+    else
+      string = string.replaceAll("$\\displaystyle$", "\\\\displaystyle");
+
+    copyToClipboard(string);
+  }
+})
 
 function check(element, type) {
   if (type === "copyMathML") {
-    console.log(element.querySelector("math").outerHTML);
     if (element.querySelector("annotation").textContent == "\\displaystyle")
       return "\\displaystyle";
     return element.querySelector("math").outerHTML

@@ -1,6 +1,6 @@
 ## Information
 
-This extension allows you to copy equations from ChatGPT and Wikipedia into Word (aka. the MathML format) and as LaTeX. It supports both the white and dark mode of the ChatGPT GUI and the [Darkreader extension](https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh) for the Wikipedia website (and the ChatGPT one if you're really into that).
+This extension allows you to copy equations from ChatGPT and Wikipedia into Word (aka. the MathML format) and as LaTeX. It supports both the white and dark mode of the ChatGPT GUI and the [Darkreader extension](https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh) for the Wikipedia website (and the ChatGPT one if you're really into that). If you wanna use multiline pasting into MS Word, you can only do this on Windows using the [PasteEquation Extension](https://github.com/Foxxey/PasteEquation).
 
 ## Installation
 
