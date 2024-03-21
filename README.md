@@ -1,6 +1,6 @@
 ## Information
 
-This extension allows you to copy equations from ChatGPT and Wikipedia into Word (aka. the MathML format) and as LaTeX. It supports both the white and dark mode of the ChatGPT GUI and the [Darkreader extension](https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh) for the Wikipedia website (and the ChatGPT one if you're really into that). If you wanna use multiline pasting into MS Word, you can only do this on Windows using the [PasteEquation Extension](https://github.com/Foxxey/PasteEquation).
+This extension allows you to copy equations from ChatGPT and Wikipedia into Word (aka. the MathML format) and as LaTeX. It supports both the white and dark mode of the ChatGPT GUI and the [Darkreader extension](https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh) for the Wikipedia website (and the ChatGPT one if you're really into that). If you wanna use multiline pasting into MS Word, you can only do this on Windows using the [PasteEquation Extension](https://github.com/Foxxey/PasteEquation) (and having this extension installed as well of course).
 
 ## Installation
 
@@ -32,6 +32,6 @@ Click on the "Load unpacked" button and select the directory where you cloned th
 
 After installing the extension, visit ChatGPT or Wikipedia. When you see a mathematical expression, right-click on it. You should see an option to copy either the LaTeX or MathML data. Now you can copy it into Word or your favorite TeX distribution. Have fun!
 
-![HowTo](https://github.com/Foxxey/ChatGPT-LaTeX-MathML-Copy/assets/66215329/c8d12d4a-d050-41e8-aa6a-8288148861be)
+![HowTo](https://github.com/Foxxey/CopyEquation/assets/66215329/36c32793-9779-4a0f-a48a-5ebe57b8da91)
 
 If you encounter any issues or have suggestions, feel free to contribute by submitting a [pull request](https://github.com/Foxxey/Karteikarte.com-Import-Script/pulls). If you do please update the manifest.json by adding 1 to the minor version.
