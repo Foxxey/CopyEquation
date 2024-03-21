@@ -30,7 +30,7 @@ Click on the "Load unpacked" button and select the directory where you cloned th
 
 ## How to Use
 
-After installing the extension, visit ChatGPT or Wikipedia. When you see a mathematical expression, right-click on it. You should see an option to copy either the LaTeX or MathML data. Now you can copy it into Word or your favorite TeX distribution. Have fun!
+After installing the extension, visit ChatGPT or Wikipedia. When you see a mathematical expression, right-click on it. You should see an option to copy either the LaTeX or Word/MathML data. Alternatively you can click on one of the icons next to where it says "ChatGPT" to copy a whole message with the equations (Word/MathML for this "multiline" option only works on Windows using a [MS Word Extension](https://github.com/Foxxey/PasteEquation). Now you can paste it into Word or your favorite TeX distribution. Have fun!
 
 ![HowTo](https://github.com/Foxxey/CopyEquation/assets/66215329/36c32793-9779-4a0f-a48a-5ebe57b8da91)
 
