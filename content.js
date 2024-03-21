@@ -1,5 +1,7 @@
 let isChatGPT = location.host.includes('chat');
 let isAndroid = navigator.userAgent.includes("Android");
+let isWindows = window.navigator.platform == "Win32";
+const parser = new DOMParser();
 
 insertCSS('contextMenu');
 insertCSS(isChatGPT ? 'chatgpt' : 'wikipedia');
@@ -19,50 +21,51 @@ function fetchSVGContent(name, callback) {
     .catch(error => console.error(`Error fetching SVG content: ${error}`));
 }
 
-// Experimental
-function updateChat() {
-  isChatLoaded = setInterval(() => {
-    chat = document.getElementsByClassName("pb-9")[0]?.parentElement; 
-    if (chat) {
-      clearInterval(isChatLoaded);
-      chat.addEventListener("scroll", removeContextMenu);
-    }
-  }, 10);
-}
-
 document.addEventListener("click", removeContextMenu);
 document.addEventListener("keydown", removeContextMenu);
 if (!isAndroid) window.addEventListener("resize", removeContextMenu);
 if (!isChatGPT && !isAndroid) document.addEventListener("scroll", removeContextMenu);
 
 let contextMenu, chat, isChatLoaded, putX, putY;
+window.updateChat = () => {};
 
 fetchSVGContent('word', function(wordSvgContent) {
   fetchSVGContent('latex', function(latexSvgContent) {
-    if (!isAndroid) {
-      wordSvgContent += "Copy for Word (MathML)";
-      latexSvgContent += "Copy LaTeX";
-    }
-
     document.addEventListener("contextmenu", openContextMenu);
     if (isAndroid) document.addEventListener("click", openContextMenu);
     
+    // Experimental
+    window.updateChat = () => {
+      if (isChatGPT)
+      isChatLoaded = setInterval(() => {
+        chat = document.getElementsByClassName("pb-9")[0]?.parentElement; 
+        if (chat) {
+          clearInterval(isChatLoaded);
+          chat.addEventListener("scroll", removeContextMenu);
+          [...document.querySelectorAll(".agent-turn .font-semibold:not(:has(svg))")].forEach((e) => {
+            e.innerHTML += isWindows ? wordSvgContent + latexSvgContent : latexSvgContent;
+            [...e.querySelectorAll("svg")].forEach((elem, index) => elem.addEventListener("click", () => {
+              copyAll(e.nextSibling, index == 0 ? "copyMathML" : "copyLaTeX");
+            }));
+          })
+        }
+      }, 10);
+    };
+
     function openContextMenu(event) {
       removeContextMenu();
-      if (isChatGPT) updateChat();
-      let Element = (isChatGPT) ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
+      let Element = isChatGPT ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
       if (Element) {
         event.preventDefault();
 
         let contextMenuHTML = `
         <div id="contextMenu" ${isAndroid ? '' : 'desktop'} style="left: ${putX}px; top: ${putY + window.scrollY}px;">
-          <div id="copyMathML">${wordSvgContent}</div>
-          <div id="copyLaTeX">${latexSvgContent}</div>
+          <div id="copyMathML">${wordSvgContent + (isAndroid ? "" : "Copy for Word (MathML)")}</div>
+          <div id="copyLaTeX">${latexSvgContent + (isAndroid ? "" : "Copy LaTeX")}</div>
         </div>`;
 
         contextMenu = document.createElement('div');
         contextMenu.innerHTML = contextMenuHTML;
-        removeContextMenu();
         document.body.appendChild(contextMenu);
 
         document.getElementById("copyMathML").addEventListener("click", () => {
@@ -74,18 +77,20 @@ fetchSVGContent('word', function(wordSvgContent) {
         });
       }
     }
+    
+    updateChat();
   })
 })
 
 function removeContextMenu() {
-  if (isChatGPT) updateChat();
+  updateChat();
   contextMenu?.remove();
 }
 
 function isWithin(x, y, classNames, func) {
-  let Elements = [];
-  classNames.forEach((e)=>{Elements = Elements.concat([...document.getElementsByClassName(e)])});
-  for (const element of Elements) {
+  let elements = [];
+  classNames.forEach((e) => {elements = elements.concat([...document.getElementsByClassName(e)])});
+  for (const element of elements) {
     let rect = element.getBoundingClientRect();
 
     if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1) {
@@ -98,28 +103,99 @@ function isWithin(x, y, classNames, func) {
 }
 
 function findMweElement(x, y) {
-  return(isWithin(x, y, ["mwe-math-fallback-image-inline", "mwe-math-fallback-image-display"], (e)=>e.parentElement))
+  return isWithin(x, y, ["mwe-math-fallback-image-inline", "mwe-math-fallback-image-display"], (e) => e.parentElement);
 }
 
 function findKatexElement(x, y) {
-  return(isWithin(x, y, ["katex"], (e)=>e))
+  return isWithin(x, y, ["katex"], (e) => e);
 }
 
-function checkAndCopy(Element, type) {
-  if (type === "copyMathML")
-    copyToClipboard(Element.querySelector("math").outerHTML);
-  else if (type === "copyLaTeX") {
-    let latex = Element.querySelector("annotation").textContent
-    let matches = latex.match(/displaystyle (.*)}/s);
-    copyToClipboard(matches ? matches[1] : latex)
-  };
+function format(string, type) {
+  return type == "copyLaTeX" ? `$${string}$` : string;
+}
+
+function addBreaks(string, array) {
+  array.forEach((e) => {
+    string = string.replaceAll(e[0], `${e[2] ? e[2] : ""}${e[0]}${"\n".repeat(e[1])}`)
+  })
+  return string;
+}
+
+function copyAll(element, type) {
+  let doc = parser.parseFromString(element.querySelector(".markdown").innerHTML, 'text/html');
+  
+  [...doc.querySelectorAll(".math")].forEach((e) => {
+    let string = check(e, type)
+      .replaceAll("&lt;", "&amp;lt;")
+      .replaceAll("&gt;", "&amp;gt;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+    let bool = e.classList.contains("math-display");
+    if (type == "copyLaTeX")
+      e.outerHTML = (bool ? `\\begin{equation*}\n${string}\n\\end{equation*}\n\n` : `$${string}$`).replaceAll("align*", "aligned");
+    else 
+      e.outerHTML = bool ? `${string}\n` : string;
+  });
+
+  [...doc.querySelectorAll(".rounded-md")].forEach((e) => {
+    let header = e.querySelector(".rounded-t-md");
+    let lang = header.querySelector("span").textContent;
+    if (type == "copyLaTeX") {
+      header.outerHTML = `\\begin{minted}{${lang}}\n\n`;
+      e.outerHTML += "\n\\end{minted}\n\n";
+    } header.remove();
+  });
+
+  doc.body.outerHTML = addBreaks(doc.body.outerHTML, [
+    ["</p>", 2],
+    ["</li>", 1],
+    ["<ul>", 1],
+    ["</ul>", 1],
+    ["<ol>", 1],
+    ["</ol>", 1],
+    ["<li>", 0, "- "]
+  ]).replaceAll(/<\/h([1-6])>/g, "</h$1>\n\n");
+
+  let string = doc.body.textContent;
+
+  if (type == "copyMathML")
+    string = string
+      .replaceAll(/<\/math>\n+/g, "</math>\n")
+      .replaceAll(/\n{3,}/g, "\n\n")
+      .replaceAll(/<\/math>\n*<math/g, "</math>\n\n<math")
+  else
+    string = string.replaceAll("$\\displaystyle$", "\\\\displaystyle");
+
+  copyToClipboard(string);
+}
+
+function check(element, type) {
+  if (type === "copyMathML") {
+    console.log(element.querySelector("math").outerHTML);
+    if (element.querySelector("annotation").textContent == "\\displaystyle")
+      return "\\displaystyle";
+    return element.querySelector("math").outerHTML
+      .replaceAll("&nbsp;", " ")
+      .replaceAll("&amp;", "&")
+      .replaceAll(/<annotation [\S\s]*?>[\S\s]*?<\/annotation>/g, "");
+  }
+  if (type === "copyLaTeX") {
+      let latex = element.querySelector("annotation").textContent;
+      let matches = latex.match(/\\displaystyle{([\S\s]*?)}/s);
+      return (matches ? matches[1] : latex).replace("\\displaystyle", "");
+  }
+}
+
+function checkAndCopy(element, type) {
+  copyToClipboard(check(element, type))
 }
 
 function copyToClipboard(text) {
-  let dummy = document.createElement("textarea");
-  document.body.appendChild(dummy);
-  dummy.value = text;
-  dummy.select();
+  function listener(e) {
+    e.clipboardData.setData("text/plain", text.trim());
+    e.preventDefault();
+  }
+  document.addEventListener("copy", listener);
   document.execCommand("copy");
-  document.body.removeChild(dummy);
+  document.removeEventListener("copy", listener);
 }

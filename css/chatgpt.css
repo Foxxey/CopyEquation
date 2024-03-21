@@ -25,7 +25,8 @@ html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu[desktop])) .katex
     filter: brightness(100);
 }
 
-#contextMenu svg {
+#contextMenu svg,
+.font-semibold svg {
     fill: #fff;
 }
 
@@ -35,10 +36,31 @@ html[class="light"]:not(html[data-darkreader-scheme="dark"]) #contextMenu {
     border: 1px solid #000;
 }
 
-html[class="light"]:not(html[data-darkreader-scheme="dark"]) #contextMenu svg {
+html[class="light"]:not(html[data-darkreader-scheme="dark"]) #contextMenu svg,
+html[class="light"]:not(html[data-darkreader-scheme="dark"]) .font-semibold svg {
     fill: #000;
 }
 
 html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu[desktop])) .katex:hover {
     filter: brightness(100);
+}
+
+.font-semibold svg {
+    display: none;
+}
+
+.font-semibold {
+    display: flex;
+    grid-gap: 10px;
+}
+
+.agent-turn:has(.katex) .font-semibold svg {
+    display: block;
+    margin: auto 0;
+    cursor: pointer;
+    filter: invert(0.6);
+}
+
+.agent-turn:has(.katex) .font-semibold svg:hover {
+    filter: invert(0);
 }
