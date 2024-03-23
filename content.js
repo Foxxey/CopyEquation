@@ -106,22 +106,13 @@ function isWithin(x, y, classNames, func) {
   return null;
 }
 
-function findMweElement(x, y) {
-  return isWithin(x, y, ["mwe-math-fallback-image-inline", "mwe-math-fallback-image-display"], (e) => e.parentElement);
-}
-
-function findKatexElement(x, y) {
-  return isWithin(x, y, ["katex"], (e) => e);
-}
-
-function format(string, type) {
-  return type == "copyLaTeX" ? `$${string}$` : string;
-}
+const findMweElement = (x, y) => isWithin(x, y, ["mwe-math-fallback-image-inline", "mwe-math-fallback-image-display"], (e) => e.parentElement),
+      findKatexElement = (x, y) => isWithin(x, y, ["katex"], (e) => e),
+      format = (string, type) => (type == "copyLaTeX" ? `$${string}$` : string);
+      
 
 function addBreaks(string, array) {
-  array.forEach((e) => {
-    string = string.replaceAll(e[0], `${e[2] ? e[2] : ""}${e[0]}${"\n".repeat(e[1])}`)
-  })
+  array.forEach((e) => { string = string.replaceAll(e[0], `${e[2] ? e[2] : ""}${e[0]}${"\n".repeat(e[1])}`) })
   return string;
 }
 
@@ -130,17 +121,13 @@ fetchContent("popup.html", (popupHTML) => {
     if (type == "copyMathML") {
       chrome.storage.sync.get(null, (e) => {
         if (!e["usedbefore"]) {
-            document.body.innerHTML += popupHTML;
-            document.getElementById("okaybutton").addEventListener("click", () => {
-              document.querySelector(".absolute.inset-0").remove();
-            })
+          document.body.innerHTML += popupHTML;
           chrome.storage.sync.set({ usedbefore: true });
         }
       });
     }
 
-    let doc = parser.parseFromString(element.querySelector(".markdown").innerHTML, 'text/html');
-    
+    let doc = parser.parseFromString(element.innerHTML, 'text/html');
     [...doc.querySelectorAll(".math")].forEach((e) => {
       let string = check(e, type)
         .replaceAll("&lt;", "&amp;lt;")
@@ -149,18 +136,18 @@ fetchContent("popup.html", (popupHTML) => {
         .replaceAll(">", "&gt;");
       let bool = e.classList.contains("math-display");
       if (type == "copyLaTeX")
-        e.outerHTML = (bool ? `\\begin{equation*}\n${string}\n\\end{equation*}\n\n` : `$${string}$`).replaceAll("align*", "aligned");
+        e.outerHTML = bool ? `\\begin{equation*}\n${string.replaceAll("align*", "aligned")}\n\\end{equation*}\n\n` : `$${string}$`;
       else 
         e.outerHTML = bool ? `${string}\n` : string;
     });
 
-    [...doc.querySelectorAll(".rounded-md")].forEach((e) => {
+    [...doc.querySelectorAll("pre > .rounded-md")].forEach((e) => {
       let header = e.querySelector(".rounded-t-md");
       let lang = header.querySelector("span").textContent;
       if (type == "copyLaTeX") {
-        header.outerHTML = `\\begin{minted}{${lang}}\n\n`;
-        e.outerHTML += "\n\\end{minted}\n\n";
-      } header.remove();
+        header.outerHTML = `\\begin{minted}{${lang}}\n`;
+        e.outerHTML += "\\end{minted}\n\n";
+      } else header.remove();
     });
 
     doc.body.outerHTML = addBreaks(doc.body.outerHTML, [
@@ -170,6 +157,7 @@ fetchContent("popup.html", (popupHTML) => {
       ["</ul>", 1],
       ["<ol>", 1],
       ["</ol>", 1],
+      ["</pre>", 1],
       ["<li>", 0, "- "]
     ]).replaceAll(/<\/h([1-6])>/g, "</h$1>\n\n");
 
@@ -178,12 +166,11 @@ fetchContent("popup.html", (popupHTML) => {
     if (type == "copyMathML")
       string = string
         .replaceAll(/<\/math>\n+/g, "</math>\n")
-        .replaceAll(/\n{3,}/g, "\n\n")
         .replaceAll(/<\/math>\n*<math/g, "</math>\n\n<math")
     else
       string = string.replaceAll("$\\displaystyle$", "\\\\displaystyle");
 
-    copyToClipboard(string);
+    copyToClipboard(string.replaceAll(/\n{3,}/g, "\n\n"));
   }
 })
 
