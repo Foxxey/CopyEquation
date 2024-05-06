@@ -1,23 +1,15 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Copy Equation from ChatGPT and Wikipedia",
-  "version": "3.2",
+  "version": "3.3",
   "description": "Copy MathML and LaTeX from math elements",
   "permissions": [
     "storage"
   ],
   "web_accessible_resources": [
-    {
-      "resources": [
-        "svg/*.svg",
-        "css/*.css",
-        "popup.html"
-      ],
-      "matches": [
-        "https://chatgpt.com/*",
-        "https://*.wikipedia.org/*"
-      ]
-    }
+    "svg/*.svg",
+    "css/*.css",
+    "popup.html"
   ],
   "icons": {
     "16": "icon/16.png",
@@ -27,21 +19,8 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "content.js"
-      ],
-      "matches": [
-        "https://chatgpt.com/*",
-        "https://*.wikipedia.org/*"
-      ]
+      "js": ["content.js"],
+      "matches": ["https://chatgpt.com/*", "https://*.wikipedia.org/*"]
     }
-  ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "{f42db7dd-558e-4cbb-89c1-c60f28aba1df}"
-    },
-    "gecko_android": {
-      "id": "{f42db7dd-558e-4cbb-89c1-c60f28aba1df}"
-    }
-  }
+  ]
 }
