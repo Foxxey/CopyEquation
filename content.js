@@ -1,6 +1,6 @@
-let isChatGPT = location.host.includes('chat');
-let isAndroid = navigator.userAgent.includes("Android");
-let isWindows = window.navigator.platform == "Win32";
+let isChatGPT = location.host == "chatgpt.com";
+let isAndroid = /(android)/i.test(navigator.userAgent);
+let isWindows = /(windows)/i.test(navigator.userAgent);
 const parser = new DOMParser();
 
 insertCSS('contextMenu');
