@@ -35,5 +35,13 @@
         "https://*.wikipedia.org/*"
       ]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{f42db7dd-558e-4cbb-89c1-c60f28aba1df}"
+    },
+    "gecko_android": {
+      "id": "{f42db7dd-558e-4cbb-89c1-c60f28aba1df}"
+    }
+  }
 }
