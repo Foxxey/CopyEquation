@@ -26,18 +26,18 @@ html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu[desktop])) .katex
 }
 
 #contextMenu svg,
-.font-semibold svg {
+.pt-0\.5 svg:not(.icon-md) {
     fill: #fff;
 }
 
-html[class="light"]:not(html[data-darkreader-scheme="dark"]) #contextMenu {
+html.light:not(html[data-darkreader-scheme="dark"]) #contextMenu {
     color: #000;
     background-color: #fff;
     border: 1px solid #000;
 }
 
-html[class="light"]:not(html[data-darkreader-scheme="dark"]) #contextMenu svg,
-html[class="light"]:not(html[data-darkreader-scheme="dark"]) .font-semibold svg {
+html.light:not(html[data-darkreader-scheme="dark"]) #contextMenu svg,
+html.light:not(html[data-darkreader-scheme="dark"]) .pt-0\.5 > svg:not(.icon-md) {
     fill: #000;
 }
 
@@ -45,22 +45,28 @@ html[data-darkreader-scheme="dark"] body:not(:has(#contextMenu[desktop])) .katex
     filter: brightness(100);
 }
 
-.font-semibold svg {
+html.light:not(html[data-darkreader-scheme="dark"]) [style="color:aquamarine;"] {
+    color:darkorchid!important;
+}
+
+.pt-0\.5 svg:not(.icon-md) {
     display: none;
 }
 
-.font-semibold {
+.pt-0\.5 {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     grid-gap: 10px;
 }
 
-.agent-turn:has(.katex) .font-semibold svg {
+.mx-auto:has(.katex) .pt-0\.5 > svg:not(.icon-md) {
     display: block;
     margin: auto 0;
     cursor: pointer;
     filter: invert(0.6);
 }
 
-.agent-turn:has(.katex) .font-semibold svg:hover {
+.mx-auto:has(.katex) .pt-0\.5 > svg:not(.icon-md):hover {
     filter: invert(0);
 }

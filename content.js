@@ -46,11 +46,13 @@ fetchSVGContent('word', (wordSvgContent) => {
         if (chat) {
           clearInterval(isChatLoaded);
           chat.addEventListener("scroll", removeContextMenu);
-          [...document.querySelectorAll(".agent-turn .font-semibold:not(:has(svg))")].forEach((e) => {
-            e.innerHTML += isWindows ? wordSvgContent + latexSvgContent : latexSvgContent;
-            [...e.querySelectorAll("svg")].forEach((elem, index) => elem.addEventListener("click", () => {
-              copyAll(e.nextSibling, index == 0 ? "copyMathML" : "copyLaTeX");
-            }));
+          [...document.getElementsByClassName("pt-0.5")].forEach((e) => {
+            if (!e.querySelector("svg:not(.icon-md)")) {
+              e.innerHTML += isWindows ? wordSvgContent + latexSvgContent : latexSvgContent;
+              [...e.querySelectorAll("svg:not(.icon-md)")].forEach((elem, index) => elem.addEventListener("click", () => {
+                copyAll(e.parentElement.parentElement.nextSibling, index == 0 ? "copyMathML" : "copyLaTeX");
+              }));
+            }
           })
         }
       }, 10);
@@ -160,6 +162,8 @@ fetchContent("popup.html", (popupHTML) => {
       ["</pre>", 1],
       ["<li>", 0, "- "]
     ]).replaceAll(/<\/h([1-6])>/g, "</h$1>\n\n");
+
+    doc.querySelector(".mt-1 > .p-1").remove();
 
     let string = doc.body.textContent;
 
