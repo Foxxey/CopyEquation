@@ -25,6 +25,6 @@ html:not(html[data-darkreader-scheme="dark"]) #contextMenu {
     border: 1px solid #000;
 }
 
-html[data-darkreader-scheme="dark"] #contextMenu svg {
+html[data-darkreader-scheme="dark"] #contextMenu .copy_eq_btn {
     fill: #fff;
 }

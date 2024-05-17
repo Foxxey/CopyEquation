@@ -33,9 +33,15 @@ if (!isChatGPT && !isAndroid) document.addEventListener("scroll", removeContextM
 let contextMenu, chat, isChatLoaded, putX, putY;
 window.updateChat = () => {};
 
+let androidChat = () => document.querySelector("[class^='react-scroll-to-bottom']:not(.h-full)");
+function updateScroll() {
+  console.log("a")
+  document.getElementById("contextMenu").style.top = putY + window.initialScroll - androidChat().scrollTop + "px";
+}
+
 fetchSVGContent('word', (wordSvgContent) => {
   fetchSVGContent('latex', (latexSvgContent) => {
-    document.addEventListener("contextmenu", openContextMenu);
+    if (!isAndroid) document.addEventListener("contextmenu", openContextMenu);
     if (isAndroid) document.addEventListener("click", openContextMenu);
     
     // Experimental
@@ -46,11 +52,12 @@ fetchSVGContent('word', (wordSvgContent) => {
         if (chat) {
           clearInterval(isChatLoaded);
           chat.addEventListener("scroll", removeContextMenu);
-          [...document.getElementsByClassName("pt-0.5")].forEach((e) => {
-            if (!e.querySelector("svg:not(.icon-md)")) {
+          [...document.getElementsByClassName(isAndroid ? "agent-turn" : "pt-0.5")].forEach((e) => {
+            if (isAndroid) e = e.querySelector(".font-semibold");
+            if (!e.querySelector(".copy_eq_btn")) {
               e.innerHTML += isWindows ? wordSvgContent + latexSvgContent : latexSvgContent;
-              [...e.querySelectorAll("svg:not(.icon-md)")].forEach((elem, index) => elem.addEventListener("click", () => {
-                copyAll(e.parentElement.parentElement.nextSibling, index == 0 ? "copyMathML" : "copyLaTeX");
+              [...e.querySelectorAll(".copy_eq_btn")].forEach((elem, index) => elem.addEventListener("click", () => {
+                copyAll(isAndroid ? e.nextSibling : e.parentElement.parentElement.nextSibling, isAndroid ? "copyLaTeX" : (index == 0 ? "copyMathML" : "copyLaTeX"));
               }));
             }
           })
@@ -63,6 +70,11 @@ fetchSVGContent('word', (wordSvgContent) => {
       let Element = isChatGPT ? findKatexElement(event.clientX, event.clientY) : findMweElement(event.clientX, event.clientY);
       if (Element) {
         event.preventDefault();
+
+        if (isAndroid) {
+          window.initialScroll = androidChat().scrollTop;
+          androidChat().addEventListener("scroll", updateScroll);
+        }
 
         let contextMenuHTML = `
         <div id="contextMenu" ${isAndroid ? '' : 'desktop'} style="left: ${putX}px; top: ${putY + window.scrollY}px;">
@@ -91,6 +103,7 @@ fetchSVGContent('word', (wordSvgContent) => {
 function removeContextMenu() {
   updateChat();
   contextMenu?.remove();
+  androidChat().removeEventListener("scroll", updateScroll)
 }
 
 function isWithin(x, y, classNames, func) {
@@ -101,7 +114,7 @@ function isWithin(x, y, classNames, func) {
 
     if (x >= rect.left - 1 && x <= rect.right + 1 && y >= rect.top - 1 && y <= rect.bottom + 1) {
       putX = isAndroid ? rect.right + 7 : x;
-      putY = isAndroid ? rect.top + (rect.bottom - rect.top) / 2 - 23 : y;
+      putY = isAndroid ? rect.top - 23 - document.body.clientHeight : y;
       return func(element);
     }
   }
@@ -163,7 +176,8 @@ fetchContent("popup.html", (popupHTML) => {
       ["<li>", 0, "- "]
     ]).replaceAll(/<\/h([1-6])>/g, "</h$1>\n\n");
 
-    doc.querySelector(".mt-1 > .p-1").remove();
+    doc.querySelector(".mt-1 > .p-1")?.remove();
+    doc.querySelector(".mt-1.flex.gap-3")?.remove();
 
     let string = doc.body.textContent;
 
